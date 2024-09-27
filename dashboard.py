@@ -118,7 +118,7 @@ all_order_df = create_sum_order_items_df(all_data_df)
 st.title('🔥Dashboard E-Commerce 🔥')
 st.subheader('Data Overview')
 st.write("Customers and All Order Dataset Head:")
-st.write(merged_df.head())
+st.write(merged_df.dtypes)
 st.write("Customers and All Order Dataset Describe:")
 st.write(merged_df.describe(include='all'))
 
