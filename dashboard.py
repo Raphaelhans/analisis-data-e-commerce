@@ -97,12 +97,12 @@ def create_rfm_df(df):
     return rfm_df
 
 # Load data
-customers_df = pd.read_csv("../data/customers_dataset.csv")
-orders_df = pd.read_csv("../data/orders_dataset.csv")
-order_payments_df = pd.read_csv("../data/order_payments_dataset.csv")
-order_items_df = pd.read_csv("../data/order_items_dataset.csv")
-product_df = pd.read_csv("../data/products_dataset.csv")
-product_tl = pd.read_csv("../data/product_category_name_translation.csv")
+customers_df = pd.read_csv("customers_dataset.csv")
+orders_df = pd.read_csv("orders_dataset.csv")
+order_payments_df = pd.read_csv("order_payments_dataset.csv")
+order_items_df = pd.read_csv("order_items_dataset.csv")
+product_df = pd.read_csv("products_dataset.csv")
+product_tl = pd.read_csv("product_category_name_translation.csv")
 
 merged_df = pd.merge(customers_df, orders_df, on="customer_id", how="inner")
 merged_df = pd.merge(merged_df, order_payments_df, on="order_id", how="inner")
