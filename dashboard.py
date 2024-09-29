@@ -96,14 +96,13 @@ def create_rfm_df(df):
     
     return rfm_df
 
-
 # Load data
-customers_df = pd.read_csv("customers_dataset.csv")
-orders_df = pd.read_csv("orders_dataset.csv")
-order_payments_df = pd.read_csv("order_payments_dataset.csv")
-order_items_df = pd.read_csv("order_items_dataset.csv")
-product_df = pd.read_csv("products_dataset.csv")
-product_tl = pd.read_csv("product_category_name_translation.csv")
+customers_df = pd.read_csv("../data/customers_dataset.csv")
+orders_df = pd.read_csv("../data/orders_dataset.csv")
+order_payments_df = pd.read_csv("../data/order_payments_dataset.csv")
+order_items_df = pd.read_csv("../data/order_items_dataset.csv")
+product_df = pd.read_csv("../data/products_dataset.csv")
+product_tl = pd.read_csv("../data/product_category_name_translation.csv")
 
 merged_df = pd.merge(customers_df, orders_df, on="customer_id", how="inner")
 merged_df = pd.merge(merged_df, order_payments_df, on="order_id", how="inner")
@@ -117,7 +116,7 @@ all_order_df = create_sum_order_items_df(all_data_df)
 # Assesing Data
 st.title('🔥Dashboard E-Commerce 🔥')
 st.subheader('Data Overview')
-st.write("Customers and All Order Dataset Head:")
+st.write("Customers and All Order Dataset Data Type:")
 st.write(merged_df.dtypes)
 st.write("Customers and All Order Dataset Describe:")
 st.write(merged_df.describe(include='all'))
@@ -126,7 +125,6 @@ st.write("Missing Values in Customers and All Orders Dataset:")
 st.write(merged_df.isnull().sum())
 
 # Cleaning Data
-
 datetime_columns = ["order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"]
  
 for column in datetime_columns:
@@ -162,7 +160,7 @@ min_date = all_data_df["order_purchase_timestamp"].min()
 max_date = all_data_df["order_purchase_timestamp"].max()
 
 with st.sidebar:
-    st.image("logo.png", width=300)
+    st.image("../logo.png", width=300)
     st.title("Filter Data")
 
     start_date, end_date = st.date_input(
@@ -180,9 +178,40 @@ rfm_df = create_rfm_df(main_df)
 rfm_df["short_customer_id"] = rfm_df["customer_id"].apply(lambda x: x[:6] + '...' + x[-4:])
 
 
-tab1, tab2 = st.tabs(["Exploratory Data","RFM"])
+tab1, tab2, tab3 = st.tabs(["EDA","Visualisasi","RFM"])
 with tab1:
-    st.subheader("Exploratory Data Analysis")
+    st.header("Exploratory Data Analysis")
+
+    st.subheader("Payment Value Distribution")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.histplot(main_df['payment_value'], bins=30, kde=True, ax=ax)
+    ax.set_title("Payment Value Distribution")  
+    ax.set_xlabel("Payment Value (BRL)")
+    ax.set_ylabel("Frequency")
+    st.pyplot(fig)
+
+    st.subheader("Correlation between Quantity and Payment Value")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(x='quantity', y='payment_value', data=all_order_df, ax=ax)
+    ax.set_title("Correlation between Quantity and Payment Value")
+    ax.set_xlabel("Total Quantity")
+    ax.set_ylabel("Payment Value (BRL)")
+    st.pyplot(fig)
+
+    st.subheader("Average Payment Value by Product Category")
+    fig, ax = plt.subplots(figsize=(12, 10))
+    sns.barplot(x='payment_value', y='product_category_name_english', data=main_df, estimator=np.mean, ax=ax)
+    ax.set_title("Average Payment Value by Product Category")
+    ax.set_xlabel("Average Payment Value (BRL)")
+    ax.set_ylabel("Product Category")
+    st.pyplot(fig)
+
+    st.subheader("Descriptive Statistics for Numerical Data")
+    numerical_cols = ['payment_value', 'quantity', 'product_photos_qty']
+    st.write(all_order_df[numerical_cols].describe())
+
+with tab2:
+    st.subheader("Visualizations & Explanatory")
 
     plot_histogram_with_highlight(
         data=main_df, 
@@ -210,7 +239,7 @@ with tab1:
     ax.set_ylabel("Metrics (Payment Value, Quantity)")  
     st.pyplot(fig)
 
-with tab2:
+with tab3:
     st.subheader("RFM Analysis")
 
     # Create tabs
