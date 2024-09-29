@@ -160,7 +160,7 @@ min_date = all_data_df["order_purchase_timestamp"].min()
 max_date = all_data_df["order_purchase_timestamp"].max()
 
 with st.sidebar:
-    st.image("../logo.png", width=300)
+    st.image("logo.png", width=300)
     st.title("Filter Data")
 
     start_date, end_date = st.date_input(
